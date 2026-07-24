@@ -1,0 +1,27 @@
+# El recolector corre en TU MAC (doble clic en actualizar.command), no aquí,
+# porque necesita las API keys de Firecrawl y Anthropic.
+#
+# Si algún día quieres que corra solo en GitHub, hay que meter las keys como
+# "secrets" del repositorio (Settings > Secrets > Actions) y descomentar abajo.
+name: Recolectar (manual, requiere secrets)
+on:
+  workflow_dispatch:
+    inputs:
+      dias: { description: 'Días atrás', default: '11' }
+# jobs:
+#   recolectar:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-python@v5
+#         with: { python-version: '3.12' }
+#       - run: pip install -r collector/requirements.txt
+#       - run: python collector/run.py --dias ${{ github.event.inputs.dias }} --con-resumen
+#         env:
+#           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+#           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+#       - run: |
+#           git config user.name recolector
+#           git config user.email actions@github.com
+#           git add data/ && git diff --staged --quiet || git commit -m "datos $(date -u +%F)"
+#           git push

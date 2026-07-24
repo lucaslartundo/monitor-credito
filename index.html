@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clasificaciones de Riesgo · Chile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* BTG Pactual Sans — fuente corporativa. Si tienes los archivos del brand
+   center (.woff2/.woff), ponlos en assets/ y se cargan solos. Si no, el
+   navegador usa la copia instalada localmente, o cae a Inter. */
+@font-face{
+  font-family:"BTG Pactual Sans";
+  src:local("BTG Pactual Sans"),
+      url("assets/BTGPactualSans.woff2") format("woff2"),
+      url("assets/BTGPactualSans.woff") format("woff");
+  font-weight:400 700;
+  font-display:swap;
+}
+
+/* ==========================================================================
+   TOKENS DE MARCA
+   Los valores de abajo son una aproximación institucional. Reemplázalos por
+   los hexes y la tipografía oficiales del brand center de BTG Pactual: están
+   todos en un solo lugar, no hay colores sueltos más abajo en la hoja.
+   Si tienen la fuente corporativa en un CDN interno, cambia --f-ui y borra
+   el <link> de Google Fonts.
+   ========================================================================== */
+:root{
+  /* Paleta corporativa oficial BTG Pactual */
+  --btg-900:#05132A;   /* azul mas oscuro — cabecera, fondo institucional */
+  --btg-800:#0B2859;
+  --btg-700:#10408D;   /* azul primario */
+  --btg-600:#195AB4;
+  --btg-500:#307AE0;   /* acento, foco */
+  --btg-400:#549CFF;
+  --btg-300:#6BAAFF;
+  --btg-200:#87BAFF;
+  --btg-100:#D2E5FF;   /* fondos suaves */
+  --blanco:#FFFFFF;
+
+  --tinta:#05132A;
+  --gris-600:#5b6b82;
+  --gris-300:#c3cede;
+  --gris-200:#dde5f0;
+  --gris-100:#eef3fa;
+  --papel:#ffffff;
+  --fondo:#f4f7fc;
+
+  /* Semaforo de acciones, armonizado con la marca */
+  --sube:#0d6b46;   --sube-bg:#e2f0ea;
+  --baja:#a4231b;   --baja-bg:#f7e4e2;
+  --neutro:#8a96a8; --neutro-bg:#eef1f6;
+
+  --f-ui:"BTG Pactual Sans","Inter",-apple-system,"Segoe UI",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--f-ui);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.lbl{font-family:var(--f-num);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-600)}
+
+/* ---------- barra superior ---------- */
+.top{background:var(--btg-900);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 24px;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:14px;min-width:0}
+.marca .logo{flex:none;color:#fff;line-height:0}
+.marca .logo svg{height:30px;width:auto;display:block}
+.marca .titulo{border-left:1px solid rgba(255,255,255,.22);padding-left:16px}
+.marca h1{margin:0;font-size:15px;font-weight:600;letter-spacing:-.005em}
+.marca span{display:block;font-size:11.5px;color:rgba(255,255,255,.62);font-weight:400}
+.sello{font-family:var(--f-num);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.62);text-align:right}
+
+/* ---------- resumen ---------- */
+.cintillo{background:var(--btg-800);color:#fff;border-top:1px solid rgba(255,255,255,.1)}
+.cintillo .wrap{display:flex;gap:34px;padding:12px 24px;flex-wrap:wrap;align-items:baseline}
+.kpi b{font-family:var(--f-num);font-size:21px;font-weight:600;letter-spacing:-.02em}
+.kpi span{font-size:11px;color:rgba(255,255,255,.62);margin-left:7px;text-transform:uppercase;letter-spacing:.08em}
+.kpi.up b{color:#5fd6a4} .kpi.down b{color:#ff9d94}
+
+/* ---------- filtros ---------- */
+.panelbar{background:var(--papel);border-bottom:1px solid var(--gris-200)}
+.filtros{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));padding:16px 24px;align-items:end}
+.campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+.campo input,.campo select{font-family:var(--f-num);font-size:12.5px;padding:8px 10px;border:1px solid var(--gris-300);background:#fff;color:var(--tinta);border-radius:2px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--btg-500);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.cmf-link{display:block;margin-top:6px;font-family:var(--f-num);font-size:10.5px;
+  color:var(--btg-700);text-decoration:none;border:1px dashed var(--btg-300);
+  padding:5px 8px;border-radius:2px;background:var(--btg-100)}
+.cmf-link:hover{background:var(--btg-200);text-decoration:underline}
+.chip{font-family:var(--f-ui);font-size:11.5px;font-weight:500;padding:6px 12px;border:1px solid var(--gris-300);background:#fff;border-radius:2px;cursor:pointer;color:var(--gris-600)}
+.chip[aria-pressed=true]{background:var(--btg-900);border-color:var(--btg-900);color:#fff}
+.chip.sube[aria-pressed=true]{background:var(--sube);border-color:var(--sube)}
+.chip.baja[aria-pressed=true]{background:var(--baja);border-color:var(--baja)}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 24px;border-top:1px solid var(--gris-200);flex-wrap:wrap}
+.btn{font-family:var(--f-ui);font-size:12px;font-weight:500;padding:7px 14px;cursor:pointer;border:1px solid var(--gris-300);background:#fff;border-radius:2px;color:var(--tinta);text-decoration:none;display:inline-block;text-align:center}
+.btn:hover{border-color:var(--btg-500);color:var(--btg-500)}
+.btn.pri{background:var(--btg-700);border-color:var(--btg-500);color:#fff}
+.btn.pri:hover{background:var(--btg-800);border-color:var(--btg-900);color:#fff}
+.btn[aria-disabled=true]{opacity:.4;pointer-events:none}
+
+/* ---------- tabla ---------- */
+.libro{background:var(--papel);border:1px solid var(--gris-200);border-top:none;margin-bottom:60px}
+.cab,.fila{display:grid;grid-template-columns:84px 1fr 132px 150px 104px;gap:16px}
+.cab{padding:9px 24px;background:var(--gris-100);border-bottom:1px solid var(--gris-300)}
+.reg{border-bottom:1px solid var(--gris-200)}
+.reg:last-child{border-bottom:none}
+.fila{align-items:baseline;width:100%;text-align:left;padding:13px 24px;background:none;border:none;border-left:3px solid transparent;cursor:pointer;font:inherit;color:inherit}
+.fila:hover,.reg.abierto .fila{background:var(--btg-100)}
+.reg.k-sube .fila{border-left-color:var(--sube)}
+.reg.k-baja .fila{border-left-color:var(--baja)}
+.reg.k-perspectiva .fila{border-left-color:var(--btg-500)}
+.f-fecha{font-family:var(--f-num);font-size:11.5px;color:var(--gris-600)}
+.f-emisor{min-width:0}
+.f-emisor .nm{font-weight:600;font-size:14.5px;display:block;line-height:1.3}
+.f-emisor .sub{font-size:11.5px;color:var(--gris-600)}
+.f-ag{font-size:11.5px;color:var(--gris-600)}
+.f-nota{font-family:var(--f-num);font-size:12.5px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.f-nota .ant{color:var(--gris-600);text-decoration:line-through;font-size:11px}
+.f-nota .act{font-weight:600;font-size:14.5px}
+.reg.k-sube .f-nota .act{color:var(--sube)}
+.reg.k-baja .f-nota .act{color:var(--baja)}
+.f-var{display:flex;align-items:center;gap:8px;font-family:var(--f-num);font-size:11px;color:var(--gris-600)}
+.gl{width:21px;height:21px;flex:none;display:grid;place-items:center;border-radius:2px;font-size:11px;font-weight:700}
+.k-sube .gl{background:var(--sube-bg);color:var(--sube)}
+.k-baja .gl{background:var(--baja-bg);color:var(--baja)}
+.k-mantiene .gl,.k-nueva .gl,.k-retiro .gl,.k-perspectiva .gl{background:var(--neutro-bg);color:var(--neutro)}
+.k-perspectiva .gl{color:var(--btg-500)}
+.aviso{display:inline-block;margin-left:7px;font-family:var(--f-num);font-size:8.5px;letter-spacing:.08em;padding:1px 5px;border:1px solid var(--gris-300);color:var(--gris-600);vertical-align:1px}
+
+/* ---------- detalle ---------- */
+.det{display:none;padding:0 24px 26px;background:var(--gris-100);border-left:3px solid var(--btg-500)}
+.reg.abierto .det{display:block}
+.titular{font-size:13px;color:var(--gris-600);padding:14px 0 0;font-style:italic}
+.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;background:var(--gris-300);border:1px solid var(--gris-300);margin:14px 0 0}
+.cif{background:#fff;padding:10px 12px}
+.cif b{font-family:var(--f-num);font-size:15px;font-weight:600;display:block;letter-spacing:-.02em}
+.cif i{font-style:normal;font-size:11px;color:var(--gris-600);display:block;margin-top:2px}
+.cif em{font-style:normal;font-family:var(--f-num);font-size:9px;letter-spacing:.08em;color:var(--gris-300);text-transform:uppercase}
+.rejilla{display:grid;grid-template-columns:188px 1fr;gap:28px;margin-top:16px;align-items:start}
+.simple{display:grid;grid-template-columns:188px 210px 1fr;gap:28px;margin-top:16px;align-items:start}
+.simple .acc{margin-top:0;max-width:340px}
+@media(max-width:880px){.rejilla,.simple{grid-template-columns:1fr}}
+.caja{border:1px solid var(--gris-200);background:#fff;padding:14px}
+.caja h4{margin:0 0 10px;font-family:var(--f-num);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-600);font-weight:500}
+.acc{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ficha{margin-top:12px;font-family:var(--f-num);font-size:10.5px;color:var(--gris-600);line-height:1.75}
+.ficha div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--gris-200)}
+.bloques sec{display:block;padding:14px 0;border-bottom:1px solid var(--gris-200)}
+.bloques sec:last-child{border-bottom:none}
+.bloques h3{margin:0 0 6px;font-family:var(--f-num);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--btg-500);font-weight:600}
+.bloques h3 u{text-decoration:none;color:var(--gris-300);margin-right:8px}
+.bloques p{margin:0;font-size:14px;line-height:1.65}
+.pend{padding:20px 0;font-size:13px;color:var(--gris-600)}
+
+.vacio{padding:64px 24px;text-align:center}
+.vacio h2{margin:0 0 8px;font-size:17px;font-weight:600}
+.vacio p{margin:0 auto;max-width:52ch;color:var(--gris-600);font-size:13px}
+.vacio code{font-family:var(--f-num);font-size:12px;background:var(--gris-100);padding:2px 6px;border:1px solid var(--gris-200)}
+
+@media(max-width:780px){
+  .cab{display:none}
+  .fila{grid-template-columns:1fr auto;gap:5px 12px;padding:14px}
+  .f-fecha{grid-column:1/-1;order:-1}
+  .f-var{justify-self:end}
+  .det{padding:0 14px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <div class="marca">
+    <div class="logo"><svg viewBox="0 0 999.92 536.61" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="BTG Pactual" role="img"><path d="M409.15,238.75c-28.69,0-41.86,12.07-41.86,39.67v4.23c0,26.18,11.45,38.88,38.41,38.88 c8.62,0,17.25-1.57,23.36-6.43v3.14c0,14.74-6.43,19.6-21.48,19.6h-9.01c-5.15,0.09-7.49,1-10.6,6.09l-0.02-0.01 c-25.85,40.91-70.73,65.91-119.64,65.91c-78.04,0-141.53-63.49-141.53-141.53s63.49-141.53,141.53-141.53 c54.82,0,104.68,31.75,128.02,81.15h6.5c-23.78-52.9-76.49-87.04-134.52-87.04c-81.29,0-147.43,66.13-147.43,147.43 s66.14,147.43,147.43,147.43c47.81,0,91.93-22.92,119.43-60.96h21.09c27.75,0,42.02-10.5,42.02-37.31v-40.45 C450.85,250.36,437.21,238.75,409.15,238.75z M429.21,285.32c0,14.74-5.17,19.28-20.07,19.28c-16.78,0-20.07-5.8-20.07-22.89 v-2.67c0-16.93,2.98-23.05,20.07-23.05c16.78,0,20.07,5.96,20.07,23.2V285.32z M206.74,209.12v76.98 c0,28.53,13.17,40.45,41.86,40.45c29.79,0,42.96-11.6,42.96-40.29v-7.37c0-26.97-12.23-40.14-38.88-40.14 c-8.47,0-17.72,1.72-23.99,6.58v-39.67L206.74,209.12z M249.38,256c15.05,0,20.38,5.96,20.38,23.67v6.58 c0,17.25-5.33,23.2-20.7,23.2c-15.36,0-20.7-5.96-20.7-23.36v-8.94C228.37,261.33,233.71,256,249.38,256z M356.47,258.98 l3.61-17.56h-31.04v-23.99l-21.79,3.29v71.65c0,24.77,9.72,32.14,36.22,32.14h11.6l3.61-17.4h-13.64 c-12.07,0-15.99-2.98-15.99-16.15v-31.98H356.47z"/><path d="M511.36,244.94c-21.45,0-31.43,10.59-31.43,33.34v61.86h6.77v-31.77 c4.89,6.36,14.02,10.09,25.05,10.09c21.35,0,30.86-10.28,30.86-33.34v-7.04C542.6,255.16,532.97,244.94,511.36,244.94z M535.65,285.13c0,19.51-6.48,26.76-23.91,26.76c-16.5,0-24.86-8.04-24.86-23.91v-9.7c0-19.01,7.09-26.76,24.48-26.76 c17.48,0,24.29,7.45,24.29,26.57V285.13z M827.26,246.08h-18.33l-1.52,6.57h19.85c18.16,0,24.29,4.83,24.29,19.15v6.93 c-4.5-4.51-12.47-6.79-23.72-6.79c-17.95,0-26.68,7.61-26.68,23.26v1.14c0,14.67,8.59,22.12,25.54,22.12h4.56 c17.95,0,27.06-7.44,27.06-22.12v-24.53C858.31,253.54,849.31,246.08,827.26,246.08z M851.55,297.3c0,10.5-5.74,14.59-20.49,14.59 h-2.85c-14.22,0-20.3-4.65-20.3-15.54v-1.14c0-11.83,5.78-16.87,19.34-16.87h1.14c16.23,0,23.15,4.88,23.15,16.3V297.3z M872.28,218.89v99.57h6.77v-99.57H872.28z M719.88,252.66l1.52-6.57h-30.26v-18.8l-6.95,1.24v64.39 c0,18.34,6.87,25.16,25.35,25.16h9.99l1.26-6.57h-11.26c-13.93,0-18.4-4.42-18.4-18.2v-40.65H719.88z M782.51,289.88 c0,16.95-5.3,22.39-21.82,22.39c-16.03,0-21.44-5.65-21.44-22.39v-43.8h-6.95v43.8c0,20.84,7.96,28.96,28.39,28.96 c20.3,0,28.58-8.39,28.58-28.96v-43.8h-6.77V289.88z M579.44,246.08h-18.34l-1.51,6.57h19.85c18.02,0,24.1,4.83,24.1,19.15v6.93 c-4.5-4.51-12.46-6.79-23.72-6.79c-17.95,0-26.68,7.61-26.68,23.26v1.14c0,14.67,8.66,22.12,25.73,22.12h4.57 c17.83,0,26.87-7.44,26.87-22.12v-24.53C610.31,253.54,601.37,246.08,579.44,246.08z M603.54,297.3c0,10.64-5.5,14.59-20.3,14.59 h-2.85c-14.36,0-20.49-4.65-20.49-15.54v-1.14c0-11.83,5.78-16.87,19.34-16.87h1.14c16.23,0,23.15,4.88,23.15,16.3V297.3z M629.52,285.13v-6.09c0-19.48,6.66-26.38,25.43-26.38h15.86l1.51-6.57h-17.38c-22.4,0-32.39,10.16-32.39,32.96v6.09 c0,22.79,9.99,32.96,32.39,32.96H671l1.52-6.57h-17.57C636.65,311.51,629.52,304.11,629.52,285.13z"/></svg></div>
+    <div class="titulo">
+      <h1>Clasificaciones de Riesgo</h1>
+      <span>Feller Rate · Moody's Local Chile · Humphreys · Fitch Chile</span>
+    </div>
+  </div>
+  <div class="sello" id="sello">Sin datos</div>
+</div></div>
+
+<div class="cintillo"><div class="wrap" id="kpis"></div></div>
+
+<div class="panelbar">
+  <div class="wrap" style="padding:0">
+    <div class="filtros">
+      <div class="campo"><label class="lbl" for="f1">Fecha desde</label><input type="date" id="f1"></div>
+      <div class="campo"><label class="lbl" for="f2">Fecha hasta</label><input type="date" id="f2"></div>
+      <div class="campo"><label class="lbl" for="f3">Emisor</label>
+        <input type="search" id="f3" placeholder="Buscar…" autocomplete="off">
+        <a class="cmf-link" id="cmf-link" target="_blank" rel="noopener" hidden></a>
+      </div>
+      <div class="campo"><label class="lbl" for="f4">Clasificadora</label><select id="f4"><option value="">Todas</option></select></div>
+      <div class="campo" style="grid-column:1/-1">
+        <label class="lbl">Tipo de acción</label>
+        <div class="chips" id="fk">
+          <button class="chip sube" data-k="sube" aria-pressed="true">Alzas</button>
+          <button class="chip baja" data-k="baja" aria-pressed="true">Bajas</button>
+          <button class="chip" data-k="mantiene" aria-pressed="true">Confirmaciones</button>
+          <button class="chip" data-k="perspectiva" aria-pressed="true">Cambio de perspectiva</button>
+          <button class="chip" data-k="nueva" aria-pressed="true">Primeras</button>
+          <button class="chip" data-k="retiro" aria-pressed="true">Retiros</button>
+        </div>
+      </div>
+    </div>
+    <div class="barra">
+      <span class="lbl" id="conteo"></span>
+      <span style="display:flex;gap:8px">
+        <button class="btn" id="bx">Abrir todo</button>
+        <button class="btn pri" id="bc">Exportar CSV</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap"><div class="libro">
+  <div class="cab lbl"><div>Fecha</div><div>Emisor / Instrumento</div><div>Clasificadora</div><div>Clasificación</div><div>Variación</div></div>
+  <div id="lista"></div>
+</div></div>
+
+<script>
+const ESC={
+ largo:['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','C','D','E'],
+ corto:['N1+','N1','N2','N3','N4','N5'],
+ acciones:['1a Clase Nivel 1','1a Clase Nivel 2','1a Clase Nivel 3','1a Clase Nivel 4','2a Clase Nivel 5']};
+const ix=(e,v)=>(ESC[e]||[]).indexOf(v);
+const GL={sube:'▲',baja:'▼',mantiene:'=',nueva:'+',retiro:'×',perspectiva:'◆',cambio:'△'};
+const ET={sube:'Alza',baja:'Baja',mantiene:'Confirmación',nueva:'Primera clasificación',retiro:'Retiro',perspectiva:'Cambio de perspectiva',cambio:'Cambio de clasificación'};
+const $=s=>document.querySelector(s);
+const fd=d=>d?d.split('-').reverse().join('-'):'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let D=[],abiertos=new Set(),todo=false;
+
+function notches(r){
+  if(!r.anterior||!r.actual) return null;
+  const i=ix(r.escala,r.anterior),j=ix(r.escala,r.actual);
+  return (i<0||j<0)?null:i-j;
+}
+function filtrar(){
+  const d1=$('#f1').value,d2=$('#f2').value,q=$('#f3').value.trim().toLowerCase(),ag=$('#f4').value;
+  const ks=[...document.querySelectorAll('#fk .chip')].filter(c=>c.getAttribute('aria-pressed')==='true').map(c=>c.dataset.k);
+  return D.filter(r=>(!d1||r.fecha>=d1)&&(!d2||r.fecha<=d2)&&(!ag||r.clasificadora===ag)
+    &&(!q||(r.emisor||'').toLowerCase().includes(q)||(r.titular||'').toLowerCase().includes(q))
+    &&ks.includes(r.accion));
+}
+function escalera(r){
+  const e=ESC[r.escala]||[],j=ix(r.escala,r.actual);
+  if(j<0) return `<p class="lbl" style="margin:0">${esc(r.actual||'sin nota')}</p>`;
+  const i=ix(r.escala,r.anterior);
+  const a=Math.max(0,Math.min(i<0?j:i,j)-2),b=Math.min(e.length-1,Math.max(i<0?j:i,j)+2);
+  const v=e.slice(a,b+1),H=20;
+  return `<svg viewBox="0 0 175 ${v.length*H+8}" width="100%" height="${v.length*H+8}" role="img" aria-label="Escala ${esc(r.actual)}">`+
+    v.map((n,k)=>{const y=k*H+13,ac=(a+k)===j,an=(a+k)===i&&i!==j;
+      const c=ac?(r.accion==='baja'?'var(--baja)':r.accion==='sube'?'var(--sube)':'var(--tinta)'):'var(--gris-600)';
+      return `<line x1="3" y1="${y-4}" x2="${ac||an?15:9}" y2="${y-4}" stroke="${ac?c:'var(--gris-300)'}" stroke-width="${ac?2:1}"/>
+      <text x="23" y="${y}" font-family="var(--f-num)" font-size="${ac?12:10.5}" font-weight="${ac?600:400}"
+      fill="${ac?c:(an?'var(--gris-600)':'var(--gris-300)')}" ${an?'text-decoration="line-through"':''}>${esc(n)}</text>`;
+    }).join('')+`</svg>`;
+}
+function boton(r){
+  if(!r.documento_url) return `<span class="btn" aria-disabled="true">PDF no público</span>`+
+    (r.fuente_url?`<a class="btn pri" href="${esc(r.fuente_url)}" target="_blank" rel="noopener">Ver en la clasificadora</a>`:'');
+  const ext=/^https?:\/\//i.test(r.documento_url)&&!r.documento_url.startsWith(location.origin);
+  // download solo fuerza descarga en mismo origen; si es externo, se abre.
+  return ext?`<a class="btn pri" href="${esc(r.documento_url)}" target="_blank" rel="noopener">Abrir informe (PDF)</a>`
+            :`<a class="btn pri" href="${esc(r.documento_url)}" download>Descargar informe (PDF)</a>`;
+}
+function pintar(){
+  const rs=filtrar(),c={sube:0,baja:0,mantiene:0,nueva:0,retiro:0,perspectiva:0};
+  rs.forEach(r=>c[r.accion]!==undefined&&c[r.accion]++);
+  $('#kpis').innerHTML=`
+   <span class="kpi up"><b>${c.sube}</b><span>alzas</span></span>
+   <span class="kpi down"><b>${c.baja}</b><span>bajas</span></span>
+   <span class="kpi"><b>${c.mantiene}</b><span>confirmaciones</span></span>
+   <span class="kpi"><b>${c.perspectiva}</b><span>perspectiva</span></span>
+   <span class="kpi"><b>${c.nueva}</b><span>primeras</span></span>`;
+  $('#conteo').textContent=`${rs.length} de ${D.length} registros`;
+
+  if(!D.length){
+    $('#lista').innerHTML=`<div class="vacio"><h2>No hay datos todavía</h2>
+      <p>Esta página lee <code>data/clasificaciones.json</code>. Ejecuta
+      <code>python collector/run.py --dias 60</code> o lanza el workflow
+      <code>Recolectar clasificaciones</code> en Actions.</p></div>`;return;
+  }
+  if(!rs.length){
+    $('#lista').innerHTML=`<div class="vacio"><h2>Sin resultados</h2>
+      <p>No hay acciones en ese rango con esos filtros.</p></div>`;return;
+  }
+  $('#lista').innerHTML=rs.map(r=>{
+    const n=notches(r),ab=abiertos.has(r.id),s=r.resumen,cif=r.indicadores||[];
+    const det=r.accion==='mantiene'?'sin cambio':r.accion==='nueva'?'inicial':
+              r.accion==='retiro'?'retirada':r.accion==='perspectiva'?'solo tendencia':
+              (n===null?'previa n/d':`${Math.abs(n)} notch${Math.abs(n)>1?'es':''}`);
+    return `<article class="reg k-${r.accion} ${ab?'abierto':''}" data-id="${esc(r.id)}">
+      <button class="fila" aria-expanded="${ab}">
+        <div class="f-fecha">${fd(r.fecha)}</div>
+        <div class="f-emisor"><span class="nm">${esc(r.emisor||'Emisor no identificado')}${
+          r.emisor_dudoso?'<span class="aviso">REVISAR</span>':''}</span>
+          <span class="sub">${esc(r.instrumento||r.escala)}</span></div>
+        <div class="f-ag">${esc(r.clasificadora)}</div>
+        <div class="f-nota">${r.anterior&&r.anterior!==r.actual?`<span class="ant">${esc(r.anterior)}</span>`:''}
+          <span class="act">${esc(r.actual||'—')}</span><span>· ${esc(r.perspectiva||'—')}</span></div>
+        <div class="f-var"><span class="gl" aria-hidden="true">${GL[r.accion]||'·'}</span><span>${det}</span></div>
+      </button>
+      <div class="det">
+        <p class="titular">${esc(r.titular||'')}</p>
+        ${cif.length?`<div class="cifras">${cif.map(f=>
+          `<div class="cif"><b>${esc(f.v)}</b><i>${esc(f.l)}</i><em>${esc(f.p||'')}</em></div>`).join('')}</div>`:''}
+        ${(s||cif.length)?`
+        <div class="rejilla">
+          <div>
+            <div class="caja"><h4>Escala</h4>${escalera(r)}<div class="acc">${boton(r)}</div></div>
+            <div class="ficha">
+              <div><span>Acción</span><span>${ET[r.accion]||r.accion}</span></div>
+              <div><span>Perspectiva</span><span>${esc(r.perspectiva||'—')}</span></div>
+              <div><span>Fecha</span><span>${fd(r.fecha)}</span></div>
+            </div>
+          </div>
+          <div class="bloques">${s?`
+            <sec><h3><u>01</u>Acción de clasificación</h3><p>${esc(s.accion)||'—'}</p></sec>
+            <sec><h3><u>02</u>Fundamentos</h3><p>${esc(s.fundamentos)||'—'}</p></sec>
+            <sec><h3><u>03</u>Desempeño financiero</h3><p>${esc(s.desempeno)||'—'}</p></sec>
+            <sec><h3><u>04</u>Riesgos</h3><p>${esc(s.riesgos)||'—'}</p></sec>`
+            :`<div class="pend">Cifras extraídas del informe. El texto completo está en el PDF.</div>`}
+          </div>
+        </div>`:`
+        <div class="simple">
+          <div class="caja"><h4>Escala</h4>${escalera(r)}</div>
+          <div class="ficha">
+            <div><span>Acción</span><span>${ET[r.accion]||r.accion}</span></div>
+            <div><span>Perspectiva</span><span>${esc(r.perspectiva||'—')}</span></div>
+            <div><span>Clasificadora</span><span>${esc(r.clasificadora)}</span></div>
+            <div><span>Fecha</span><span>${fd(r.fecha)}</span></div>
+          </div>
+          <div class="acc">${boton(r)}
+            <p class="pend" style="padding:4px 0 0">El informe completo, con fundamentos y cifras, está en el documento de la clasificadora.</p>
+          </div>
+        </div>`}
+      </div></article>`;
+  }).join('');
+  document.querySelectorAll('.fila').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.closest('.reg').dataset.id;
+    abiertos.has(id)?abiertos.delete(id):abiertos.add(id);pintar();
+  }));
+}
+function csv(){
+  const rs=filtrar(),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const filas=[['Fecha','Emisor','Instrumento','Clasificadora','Anterior','Actual','Perspectiva','Accion','Notches','Titular','Documento']]
+    .concat(rs.map(r=>[r.fecha,r.emisor,r.instrumento,r.clasificadora,r.anterior,r.actual,r.perspectiva,
+      ET[r.accion],notches(r)??'',r.titular,r.documento_url||r.fuente_url]));
+  const b=new Blob(['\uFEFF'+filas.map(f=>f.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`clasificaciones_${$('#f1').value}_${$('#f2').value}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
+(async function(){
+  let raw={acciones:[]};
+  try{const r=await fetch('data/clasificaciones.json',{cache:'no-store'});if(r.ok)raw=await r.json();}catch(e){}
+  D=(raw.acciones||[]).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  $('#sello').textContent=raw.generado
+    ?'Actualizado '+new Date(raw.generado).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'}):'Sin datos';
+  [...new Set(D.map(r=>r.clasificadora))].sort().forEach(a=>{
+    const o=document.createElement('option');o.value=o.textContent=a;$('#f4').append(o);});
+  const iso=d=>d.toISOString().slice(0,10);
+  $('#f2').value=iso(new Date());$('#f1').value=iso(new Date(Date.now()-90*864e5));
+  if(D.length&&D[0].fecha<$('#f1').value){$('#f1').value=D[D.length-1].fecha;$('#f2').value=D[0].fecha;}
+
+  // Buscador -> enlace a la CMF con el emisor consultado.
+  const cmf = $('#cmf-link');
+  function actualizarCMF(){
+    const q = $('#f3').value.trim();
+    if(q.length < 3){ cmf.hidden = true; return; }
+    // Registro oficial de clasificaciones de riesgo de la CMF.
+    const base = 'https://www.cmfchile.cl/institucional/estadisticas/valores_clasificaciones_asignadas.php';
+    cmf.href = base + '?buscar=' + encodeURIComponent(q);
+    cmf.textContent = 'Ver "' + q + '" en el registro oficial CMF ↗';
+    cmf.hidden = false;
+  }
+  ['#f1','#f2','#f3','#f4'].forEach(s=>$(s).addEventListener('input',()=>{abiertos.clear();pintar();}));
+  $('#f3').addEventListener('input', actualizarCMF);
+  document.querySelectorAll('#fk .chip').forEach(c=>c.addEventListener('click',()=>{
+    c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')==='true'?'false':'true');pintar();}));
+  $('#bc').addEventListener('click',csv);
+  $('#bx').addEventListener('click',e=>{todo=!todo;
+    abiertos=todo?new Set(filtrar().map(r=>r.id)):new Set();
+    e.target.textContent=todo?'Cerrar todo':'Abrir todo';pintar();});
+  pintar();
+})();
+</script>
+</body>
+</html>
