@@ -201,8 +201,8 @@ const ESC={
  corto:['N1+','N1','N2','N3','N4','N5'],
  acciones:['1a Clase Nivel 1','1a Clase Nivel 2','1a Clase Nivel 3','1a Clase Nivel 4','2a Clase Nivel 5']};
 const ix=(e,v)=>(ESC[e]||[]).indexOf(v);
-const GL={sube:'▲',baja:'▼',mantiene:'=',nueva:'+',retiro:'×',perspectiva:'◆'};
-const ET={sube:'Alza',baja:'Baja',mantiene:'Confirmación',nueva:'Primera clasificación',retiro:'Retiro',perspectiva:'Cambio de perspectiva'};
+const GL={sube:'▲',baja:'▼',mantiene:'=',nueva:'+',retiro:'×',perspectiva:'◆',cambio:'△'};
+const ET={sube:'Alza',baja:'Baja',mantiene:'Confirmación',nueva:'Primera clasificación',retiro:'Retiro',perspectiva:'Cambio de perspectiva',cambio:'Cambio de clasificación'};
 const $=s=>document.querySelector(s);
 const fd=d=>d?d.split('-').reverse().join('-'):'';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

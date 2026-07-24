@@ -1,6 +1,3 @@
-# Datos que genera el recolector — los crea GitHub Actions, no se suben a mano
-data/clasificaciones.json
-data/historial.json
 # Basura de Mac y Python
 .DS_Store
 __pycache__/

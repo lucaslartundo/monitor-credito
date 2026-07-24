@@ -33,7 +33,14 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from agencies import FUENTES, UA           # noqa: E402
-from parse import analizar, normalizar     # noqa: E402
+from parse import analizar, normalizar, LARGO, CORTO, ACCIONES  # noqa: E402
+
+
+def _mejor_nota(ant, act):
+    for esc in (LARGO, CORTO, ACCIONES):
+        if ant in esc and act in esc:
+            return esc.index(act) < esc.index(ant)
+    return False
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(RAIZ, 'data')
@@ -211,6 +218,16 @@ def main():
             if pasadas:
                 anterior = sorted(pasadas, key=lambda h: h['fecha'])[-1]['nota']
 
+        # 'cambio' viene de "cambia a X": sabemos que cambio la nota pero no la
+        # direccion. Si el historial da la previa, la deducimos.
+        accion = an['accion']
+        if accion == 'cambio':
+            if anterior and an['actual']:
+                accion = 'sube' if _mejor_nota(anterior, an['actual']) else \
+                         ('baja' if anterior != an['actual'] else 'mantiene')
+            else:
+                accion = 'baja'  # conservador: un "cambia a" sin previa suele ser baja/vigilancia
+
         reg = {
             'id': rid,
             'fecha': c['fecha'],
@@ -222,7 +239,7 @@ def main():
             'anterior': anterior,
             'actual': an['actual'],
             'perspectiva': an['perspectiva'],
-            'accion': an['accion'],
+            'accion': accion,
             'titular': an['titular'],
             'documento_url': c.get('documento_url'),
             'fuente_url': c.get('fuente_url'),

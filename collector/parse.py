@@ -11,7 +11,10 @@ import unicodedata
 # --------------------------------------------------------------------------
 # Normalizacion
 # --------------------------------------------------------------------------
-COMILLAS = dict.fromkeys(map(ord, '\u201c\u201d\u2018\u2019\u00ab\u00bb\u201e\u201f'), '"')
+# Comillas dobles -> recta. Los apostrofes simples (U+2018/U+2019) se pasan a
+# apostrofo recto ('), NO a comilla doble, para no romper "Watt's".
+COMILLAS = {**dict.fromkeys(map(ord, '\u201c\u201d\u00ab\u00bb\u201e\u201f'), '"'),
+            **dict.fromkeys(map(ord, '\u2018\u2019'), "'")}
 
 
 def normalizar(t: str) -> str:
@@ -61,12 +64,16 @@ PERSPECTIVAS = {
 # Verbos -> accion
 # --------------------------------------------------------------------------
 VERBOS = [
-    (r'\b(sube|subio|aumenta|aumento|eleva|elevo|incrementa|mejora)\b', 'sube'),
+    (r'\b(sube|subio|aumenta|aumento|eleva|elevo|incrementa|mejora|mejoro)\b', 'sube'),
     (r'\b(baja|bajo|disminuye|disminuyo|reduce|redujo|rebaja|rebajo|desciende)\b', 'baja'),
-    (r'\b(ratifica|ratifico|mantiene|mantuvo|confirma|confirmo)\b', 'mantiene'),
-    (r'\b(asigna|asigno|clasifica|clasifico|otorga|otorgo|comienza la clasificacion)\b', 'nueva'),
+    (r'\b(ratifica|ratifico|mantiene|mantuvo|confirma|confirmo|acordo mantener)\b', 'mantiene'),
+    (r'\b(asigna|asigno|clasifica|clasifico|otorga|otorgo|califica|califico|'
+     r'comienza la clasificacion)\b', 'nueva'),
     (r'\b(retira|retiro|retirar|cancela)\b', 'retiro'),
 ]
+
+# Palabras que en Humphreys son valores de TENDENCIA, no de nota.
+TENDENCIA_PALABRAS = r'(favorable|desfavorable|estable|positiva|negativa|en observacion|en desarrollo)'
 
 
 def escala_de(nota: str) -> str:
@@ -166,10 +173,17 @@ def analizar(titular: str, emisor_conocido: str = None) -> dict:
 
     anterior, actual = _notas(t)
 
-    # "modifica" es ambiguo: puede ser nota o solo tendencia.
+    # "cambia/modifica" es ambiguo: puede tocar la nota o solo la tendencia.
     if accion is None and re.search(r'\b(modifica|modifico|cambia|cambio)\b', tl):
-        if anterior and actual:
+        # Si el objeto explicito es la tendencia/perspectiva -> perspectiva.
+        toca_tendencia = re.search(rf'(?:a|desde|hasta)\s+"?{TENDENCIA_PALABRAS}"?'
+                                   r'|tendencia|perspectiva', tl)
+        if anterior and actual and anterior != actual:
             accion = 'sube' if _mejor(anterior, actual) else 'baja'
+        elif actual and not re.search(r'\btendencia\b|\bperspectiva\b', tl):
+            # "cambia a Categoria B la clasificacion de bonos" -> nota nueva,
+            # direccion desconocida hasta cruzar con el historial.
+            accion = 'cambio'
         else:
             accion = 'perspectiva'
 
@@ -228,30 +242,54 @@ _NOMBRE = (r'(?:[A-ZÁÉÍÓÚÑ0-9][\wÁÉÍÓÚÑáéíóúñ&.\'’-]*)'
 _TRAS_PREP = re.compile(rf'\b(?:de|para|a)\s+(?:la\s+|el\s+|los\s+|las\s+)?({_NOMBRE})\s*$')
 
 
+def _limpia_para_emisor(t: str) -> str:
+    """
+    Borra tramos que NO son el emisor. Opera sobre texto ya normalizado, asi
+    que todas las comillas son rectas (").
+    """
+    # 1. Notas entre comillas rectas.
+    t = re.sub(r'"[^"]*"', ' ', t)
+    # 2. Tramos "desde/hasta/en/a <nota>" SIN comillas. La nota es corta: una
+    #    categoria opcfellcon signo, o "Primera/Segunda Clase Nivel N", o Nivel.
+    nota = (r'(?:categor[ií]a\s+)?(?:AAA|AA[+-]?|A[+-]?|BBB[+-]?|BB[+-]?|B[+-]?|'
+            r'C|D|E|N-?[1-5]\+?|(?:primera|segunda|1[°ºa]?|2[°ºa]?)\s*clase'
+            r'(?:\s*nivel\s*[1-5])?|nivel\s*[1-5])(?:\s*/\s*\w+)?')
+    t = re.sub(rf'\b(?:desde|hasta|en|a)\s+{nota}', ' ', t, flags=re.I)
+    # 3. Colas de tendencia/perspectiva y subordinadas -> hasta el final.
+    t = re.sub(r'\bcon\s+tendencia\b.*$', ' ', t, flags=re.I)
+    t = re.sub(r'\.?\s*(?:las?\s+)?perspectivas?\b.*$', ' ', t, flags=re.I)
+    t = re.sub(r'\bmanteniendo\b.*$|\bmodificando\b.*$', ' ', t, flags=re.I)
+    t = re.sub(r',\s*(?:dado|debido|tras|a la vez|as[ií] como|y en\b|'
+               r'y clasifica|y modifica|y ratifica)\b.*$', ' ', t, flags=re.I)
+    # 4. "solvencia y bonos", "solvencia y lineas de bonos" antes del emisor:
+    #    normalizar a un solo "de" para que el ultimo "de" sea el del emisor.
+    t = re.sub(r'\b(solvencia|obligaciones|p[oó]lizas|t[ií]tulos|cuotas|'
+               r'l[ií]neas?|bonos|acciones|efectos)\b(?:\s+(?:y|e|,)\s+\w+)*',
+               r'\1', t, flags=re.I)
+    return re.sub(r'\s+', ' ', t).strip(' ,.;:')
+
+
 def extraer_emisor(titular: str):
     """
-    Devuelve el tramo final del titular que arranca justo despues de una
-    preposicion y llega hasta el final. De los candidatos posibles toma el que
-    empieza ANTES, porque "de Cristalerias de Chile S.A." es el emisor y
-    "de Chile S.A." es solo su cola.
-
-    Devuelve None si no logra algo limpio. El orquestador marca el registro
-    para revision en vez de inventar un nombre.
+    Emisor = nombre propio que sigue al ultimo "de/para" del titular, tras
+    quitar notas y tendencias. Devuelve None si no hay algo limpio.
     """
-    t = normalizar(titular)
-    t = _CORTES.split(t)[0]
-    t = re.sub(r'[\s.,;:]+$', '', t)
-
-    mejor = None
-    for m in re.finditer(r'\b(?:de|para)\s+', t, re.I):
-        resto = t[m.end():]
-        resto = re.sub(r'^(?:la|el|los|las)\s+', '', resto, flags=re.I)
-        if not resto or _RUIDO.match(sin_tildes(resto)):
+    t = _limpia_para_emisor(normalizar(titular))
+    posiciones = [m.end() for m in re.finditer(r'\b(?:de|para)\s+', t, re.I)]
+    # "Chile", "Santiago"... al final suelen ser parte del nombre, no preposicion.
+    COLA_LUGAR = re.compile(r'^(chile|santiago|concepcion|antofagasta|valparaiso|'
+                            r'iquique|magallanes|los andes|la construccion)\b', re.I)
+    for k, pos in enumerate(reversed(posiciones)):
+        resto = re.sub(r'^(?:la|el|los|las)\s+', '', t[pos:], flags=re.I).strip(' ,.')
+        if len(resto) <= 2 or _RUIDO.match(sin_tildes(resto)):
             continue
-        mm = re.match(rf'^({_NOMBRE})$', resto)
-        if mm:
-            mejor = mm.group(1).strip(' ,.')
-            break          # el primero que llega al final es el bueno
-    if mejor and len(mejor) > 2:
-        return mejor
+        # Si es solo una cola de lugar y hay un "de" mas atras, sigo retrocediendo.
+        if COLA_LUGAR.match(sin_tildes(resto)) and k + 1 < len(posiciones):
+            continue
+        # Limpiar SOLO colas evidentes (nunca 'y'/'de', que pueden ser internos).
+        resto = re.sub(r'\s+(?:en|con|desde|hasta|on)\s+.*$', '', resto, flags=re.I)
+        resto = re.sub(r'\s+(?:en|con|a)$', '', resto, flags=re.I)
+        resto = resto.strip(' ,.;:')
+        if len(resto) > 2:
+            return resto
     return None
