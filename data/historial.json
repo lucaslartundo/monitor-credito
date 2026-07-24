@@ -1,0 +1,44 @@
+{
+ "eurocapital|largo": [
+  {
+   "fecha": "2026-07-23",
+   "nota": "A+"
+  }
+ ],
+ "zurich santander sv|largo": [
+  {
+   "fecha": "2026-07-13",
+   "nota": "AA"
+  }
+ ],
+ "zurich santander sg|largo": [
+  {
+   "fecha": "2026-07-13",
+   "nota": "AA"
+  }
+ ],
+ "bupa seguros de vida|largo": [
+  {
+   "fecha": "2026-07-13",
+   "nota": "A+"
+  }
+ ],
+ "contempora seguros generales|largo": [
+  {
+   "fecha": "2026-07-13",
+   "nota": "A"
+  }
+ ],
+ "assurant chile seguros generales|largo": [
+  {
+   "fecha": "2026-07-13",
+   "nota": "A+"
+  }
+ ],
+ "esmax distribucion|largo": [
+  {
+   "fecha": "2026-07-07",
+   "nota": "AA"
+  }
+ ]
+}
