@@ -1,0 +1,32 @@
+name: Recolectar clasificaciones
+
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'   # 08:00 en Chile (UTC-4), lunes a viernes
+  workflow_dispatch:
+    inputs:
+      dias:
+        description: 'Días hacia atrás'
+        default: '30'
+
+permissions:
+  contents: write
+
+jobs:
+  recolectar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r collector/requirements.txt
+      - run: python collector/run.py --dias ${{ github.event.inputs.dias || 30 }}
+      - name: Commit si hubo cambios
+        run: |
+          git config user.name  "recolector"
+          git config user.email "actions@github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "datos: $(date -u +%Y-%m-%d)"
+          git push

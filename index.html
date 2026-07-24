@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clasificaciones de Riesgo · Chile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   TOKENS DE MARCA
+   Los valores de abajo son una aproximación institucional. Reemplázalos por
+   los hexes y la tipografía oficiales del brand center de BTG Pactual: están
+   todos en un solo lugar, no hay colores sueltos más abajo en la hoja.
+   Si tienen la fuente corporativa en un CDN interno, cambia --f-ui y borra
+   el <link> de Google Fonts.
+   ========================================================================== */
+:root{
+  --azul-900:#0a1b2e;   /* barra superior, fondo institucional */
+  --azul-800:#10263f;
+  --azul-600:#1c4a7a;   /* acento estructural, foco, botón primario */
+  --azul-200:#c3d6e8;
+  --azul-050:#eef3f8;
+
+  --tinta:#14181d;
+  --gris-600:#5d6773;
+  --gris-300:#c9d0d8;
+  --gris-200:#e2e7ec;
+  --gris-100:#f2f5f8;
+  --papel:#ffffff;
+  --fondo:#f6f8fa;
+
+  --sube:#0d6b46;   --sube-bg:#e4f1eb;
+  --baja:#a4231b;   --baja-bg:#f8e5e3;
+  --neutro:#8a939d; --neutro-bg:#eef1f4;
+
+  --f-ui:"Inter",-apple-system,"Segoe UI",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--f-ui);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.lbl{font-family:var(--f-num);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-600)}
+
+/* ---------- barra superior ---------- */
+.top{background:var(--azul-900);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 24px;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:14px;min-width:0}
+.marca .slot{width:34px;height:34px;flex:none;border:1px solid rgba(255,255,255,.34);display:grid;place-items:center;font-family:var(--f-num);font-size:8px;letter-spacing:.06em;color:rgba(255,255,255,.6);text-align:center;line-height:1.1}
+.marca h1{margin:0;font-size:15px;font-weight:600;letter-spacing:-.005em}
+.marca span{display:block;font-size:11.5px;color:rgba(255,255,255,.62);font-weight:400}
+.sello{font-family:var(--f-num);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.62);text-align:right}
+
+/* ---------- resumen ---------- */
+.cintillo{background:var(--azul-800);color:#fff;border-top:1px solid rgba(255,255,255,.1)}
+.cintillo .wrap{display:flex;gap:34px;padding:12px 24px;flex-wrap:wrap;align-items:baseline}
+.kpi b{font-family:var(--f-num);font-size:21px;font-weight:600;letter-spacing:-.02em}
+.kpi span{font-size:11px;color:rgba(255,255,255,.62);margin-left:7px;text-transform:uppercase;letter-spacing:.08em}
+.kpi.up b{color:#5fd6a4} .kpi.down b{color:#ff9d94}
+
+/* ---------- filtros ---------- */
+.panelbar{background:var(--papel);border-bottom:1px solid var(--gris-200)}
+.filtros{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));padding:16px 24px;align-items:end}
+.campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+.campo input,.campo select{font-family:var(--f-num);font-size:12.5px;padding:8px 10px;border:1px solid var(--gris-300);background:#fff;color:var(--tinta);border-radius:2px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--azul-600);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-ui);font-size:11.5px;font-weight:500;padding:6px 12px;border:1px solid var(--gris-300);background:#fff;border-radius:2px;cursor:pointer;color:var(--gris-600)}
+.chip[aria-pressed=true]{background:var(--azul-900);border-color:var(--azul-900);color:#fff}
+.chip.sube[aria-pressed=true]{background:var(--sube);border-color:var(--sube)}
+.chip.baja[aria-pressed=true]{background:var(--baja);border-color:var(--baja)}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 24px;border-top:1px solid var(--gris-200);flex-wrap:wrap}
+.btn{font-family:var(--f-ui);font-size:12px;font-weight:500;padding:7px 14px;cursor:pointer;border:1px solid var(--gris-300);background:#fff;border-radius:2px;color:var(--tinta);text-decoration:none;display:inline-block;text-align:center}
+.btn:hover{border-color:var(--azul-600);color:var(--azul-600)}
+.btn.pri{background:var(--azul-600);border-color:var(--azul-600);color:#fff}
+.btn.pri:hover{background:var(--azul-900);border-color:var(--azul-900);color:#fff}
+.btn[aria-disabled=true]{opacity:.4;pointer-events:none}
+
+/* ---------- tabla ---------- */
+.libro{background:var(--papel);border:1px solid var(--gris-200);border-top:none;margin-bottom:60px}
+.cab,.fila{display:grid;grid-template-columns:84px 1fr 132px 150px 104px;gap:16px}
+.cab{padding:9px 24px;background:var(--gris-100);border-bottom:1px solid var(--gris-300)}
+.reg{border-bottom:1px solid var(--gris-200)}
+.reg:last-child{border-bottom:none}
+.fila{align-items:baseline;width:100%;text-align:left;padding:13px 24px;background:none;border:none;border-left:3px solid transparent;cursor:pointer;font:inherit;color:inherit}
+.fila:hover,.reg.abierto .fila{background:var(--azul-050)}
+.reg.k-sube .fila{border-left-color:var(--sube)}
+.reg.k-baja .fila{border-left-color:var(--baja)}
+.reg.k-perspectiva .fila{border-left-color:var(--azul-600)}
+.f-fecha{font-family:var(--f-num);font-size:11.5px;color:var(--gris-600)}
+.f-emisor{min-width:0}
+.f-emisor .nm{font-weight:600;font-size:14.5px;display:block;line-height:1.3}
+.f-emisor .sub{font-size:11.5px;color:var(--gris-600)}
+.f-ag{font-size:11.5px;color:var(--gris-600)}
+.f-nota{font-family:var(--f-num);font-size:12.5px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.f-nota .ant{color:var(--gris-600);text-decoration:line-through;font-size:11px}
+.f-nota .act{font-weight:600;font-size:14.5px}
+.reg.k-sube .f-nota .act{color:var(--sube)}
+.reg.k-baja .f-nota .act{color:var(--baja)}
+.f-var{display:flex;align-items:center;gap:8px;font-family:var(--f-num);font-size:11px;color:var(--gris-600)}
+.gl{width:21px;height:21px;flex:none;display:grid;place-items:center;border-radius:2px;font-size:11px;font-weight:700}
+.k-sube .gl{background:var(--sube-bg);color:var(--sube)}
+.k-baja .gl{background:var(--baja-bg);color:var(--baja)}
+.k-mantiene .gl,.k-nueva .gl,.k-retiro .gl,.k-perspectiva .gl{background:var(--neutro-bg);color:var(--neutro)}
+.k-perspectiva .gl{color:var(--azul-600)}
+.aviso{display:inline-block;margin-left:7px;font-family:var(--f-num);font-size:8.5px;letter-spacing:.08em;padding:1px 5px;border:1px solid var(--gris-300);color:var(--gris-600);vertical-align:1px}
+
+/* ---------- detalle ---------- */
+.det{display:none;padding:0 24px 26px;background:var(--gris-100);border-left:3px solid var(--azul-600)}
+.reg.abierto .det{display:block}
+.titular{font-size:13px;color:var(--gris-600);padding:14px 0 0;font-style:italic}
+.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;background:var(--gris-300);border:1px solid var(--gris-300);margin:14px 0 0}
+.cif{background:#fff;padding:10px 12px}
+.cif b{font-family:var(--f-num);font-size:15px;font-weight:600;display:block;letter-spacing:-.02em}
+.cif i{font-style:normal;font-size:11px;color:var(--gris-600);display:block;margin-top:2px}
+.cif em{font-style:normal;font-family:var(--f-num);font-size:9px;letter-spacing:.08em;color:var(--gris-300);text-transform:uppercase}
+.rejilla{display:grid;grid-template-columns:188px 1fr;gap:28px;margin-top:16px;align-items:start}
+.simple{display:grid;grid-template-columns:188px 210px 1fr;gap:28px;margin-top:16px;align-items:start}
+.simple .acc{margin-top:0;max-width:340px}
+@media(max-width:880px){.rejilla,.simple{grid-template-columns:1fr}}
+.caja{border:1px solid var(--gris-200);background:#fff;padding:14px}
+.caja h4{margin:0 0 10px;font-family:var(--f-num);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-600);font-weight:500}
+.acc{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ficha{margin-top:12px;font-family:var(--f-num);font-size:10.5px;color:var(--gris-600);line-height:1.75}
+.ficha div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--gris-200)}
+.bloques sec{display:block;padding:14px 0;border-bottom:1px solid var(--gris-200)}
+.bloques sec:last-child{border-bottom:none}
+.bloques h3{margin:0 0 6px;font-family:var(--f-num);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--azul-600);font-weight:600}
+.bloques h3 u{text-decoration:none;color:var(--gris-300);margin-right:8px}
+.bloques p{margin:0;font-size:14px;line-height:1.65}
+.pend{padding:20px 0;font-size:13px;color:var(--gris-600)}
+
+.vacio{padding:64px 24px;text-align:center}
+.vacio h2{margin:0 0 8px;font-size:17px;font-weight:600}
+.vacio p{margin:0 auto;max-width:52ch;color:var(--gris-600);font-size:13px}
+.vacio code{font-family:var(--f-num);font-size:12px;background:var(--gris-100);padding:2px 6px;border:1px solid var(--gris-200)}
+
+@media(max-width:780px){
+  .cab{display:none}
+  .fila{grid-template-columns:1fr auto;gap:5px 12px;padding:14px}
+  .f-fecha{grid-column:1/-1;order:-1}
+  .f-var{justify-self:end}
+  .det{padding:0 14px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <div class="marca">
+    <div class="slot">LOGO<br>AQUÍ</div>
+    <div>
+      <h1>Clasificaciones de Riesgo · Chile</h1>
+      <span>Feller Rate · Moody's Local Chile · Humphreys · Fitch Chile</span>
+    </div>
+  </div>
+  <div class="sello" id="sello">Sin datos</div>
+</div></div>
+
+<div class="cintillo"><div class="wrap" id="kpis"></div></div>
+
+<div class="panelbar">
+  <div class="wrap" style="padding:0">
+    <div class="filtros">
+      <div class="campo"><label class="lbl" for="f1">Fecha desde</label><input type="date" id="f1"></div>
+      <div class="campo"><label class="lbl" for="f2">Fecha hasta</label><input type="date" id="f2"></div>
+      <div class="campo"><label class="lbl" for="f3">Emisor</label><input type="search" id="f3" placeholder="Buscar…" autocomplete="off"></div>
+      <div class="campo"><label class="lbl" for="f4">Clasificadora</label><select id="f4"><option value="">Todas</option></select></div>
+      <div class="campo" style="grid-column:1/-1">
+        <label class="lbl">Tipo de acción</label>
+        <div class="chips" id="fk">
+          <button class="chip sube" data-k="sube" aria-pressed="true">Alzas</button>
+          <button class="chip baja" data-k="baja" aria-pressed="true">Bajas</button>
+          <button class="chip" data-k="mantiene" aria-pressed="true">Confirmaciones</button>
+          <button class="chip" data-k="perspectiva" aria-pressed="true">Cambio de perspectiva</button>
+          <button class="chip" data-k="nueva" aria-pressed="true">Primeras</button>
+          <button class="chip" data-k="retiro" aria-pressed="true">Retiros</button>
+        </div>
+      </div>
+    </div>
+    <div class="barra">
+      <span class="lbl" id="conteo"></span>
+      <span style="display:flex;gap:8px">
+        <button class="btn" id="bx">Abrir todo</button>
+        <button class="btn pri" id="bc">Exportar CSV</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap"><div class="libro">
+  <div class="cab lbl"><div>Fecha</div><div>Emisor / Instrumento</div><div>Clasificadora</div><div>Clasificación</div><div>Variación</div></div>
+  <div id="lista"></div>
+</div></div>
+
+<script>
+const ESC={
+ largo:['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','C','D','E'],
+ corto:['N1+','N1','N2','N3','N4','N5'],
+ acciones:['1a Clase Nivel 1','1a Clase Nivel 2','1a Clase Nivel 3','1a Clase Nivel 4','2a Clase Nivel 5']};
+const ix=(e,v)=>(ESC[e]||[]).indexOf(v);
+const GL={sube:'▲',baja:'▼',mantiene:'=',nueva:'+',retiro:'×',perspectiva:'◆'};
+const ET={sube:'Alza',baja:'Baja',mantiene:'Confirmación',nueva:'Primera clasificación',retiro:'Retiro',perspectiva:'Cambio de perspectiva'};
+const $=s=>document.querySelector(s);
+const fd=d=>d?d.split('-').reverse().join('-'):'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let D=[],abiertos=new Set(),todo=false;
+
+function notches(r){
+  if(!r.anterior||!r.actual) return null;
+  const i=ix(r.escala,r.anterior),j=ix(r.escala,r.actual);
+  return (i<0||j<0)?null:i-j;
+}
+function filtrar(){
+  const d1=$('#f1').value,d2=$('#f2').value,q=$('#f3').value.trim().toLowerCase(),ag=$('#f4').value;
+  const ks=[...document.querySelectorAll('#fk .chip')].filter(c=>c.getAttribute('aria-pressed')==='true').map(c=>c.dataset.k);
+  return D.filter(r=>(!d1||r.fecha>=d1)&&(!d2||r.fecha<=d2)&&(!ag||r.clasificadora===ag)
+    &&(!q||(r.emisor||'').toLowerCase().includes(q)||(r.titular||'').toLowerCase().includes(q))
+    &&ks.includes(r.accion));
+}
+function escalera(r){
+  const e=ESC[r.escala]||[],j=ix(r.escala,r.actual);
+  if(j<0) return `<p class="lbl" style="margin:0">${esc(r.actual||'sin nota')}</p>`;
+  const i=ix(r.escala,r.anterior);
+  const a=Math.max(0,Math.min(i<0?j:i,j)-2),b=Math.min(e.length-1,Math.max(i<0?j:i,j)+2);
+  const v=e.slice(a,b+1),H=20;
+  return `<svg viewBox="0 0 175 ${v.length*H+8}" width="100%" height="${v.length*H+8}" role="img" aria-label="Escala ${esc(r.actual)}">`+
+    v.map((n,k)=>{const y=k*H+13,ac=(a+k)===j,an=(a+k)===i&&i!==j;
+      const c=ac?(r.accion==='baja'?'var(--baja)':r.accion==='sube'?'var(--sube)':'var(--tinta)'):'var(--gris-600)';
+      return `<line x1="3" y1="${y-4}" x2="${ac||an?15:9}" y2="${y-4}" stroke="${ac?c:'var(--gris-300)'}" stroke-width="${ac?2:1}"/>
+      <text x="23" y="${y}" font-family="var(--f-num)" font-size="${ac?12:10.5}" font-weight="${ac?600:400}"
+      fill="${ac?c:(an?'var(--gris-600)':'var(--gris-300)')}" ${an?'text-decoration="line-through"':''}>${esc(n)}</text>`;
+    }).join('')+`</svg>`;
+}
+function boton(r){
+  if(!r.documento_url) return `<span class="btn" aria-disabled="true">PDF no público</span>`+
+    (r.fuente_url?`<a class="btn pri" href="${esc(r.fuente_url)}" target="_blank" rel="noopener">Ver en la clasificadora</a>`:'');
+  const ext=/^https?:\/\//i.test(r.documento_url)&&!r.documento_url.startsWith(location.origin);
+  // download solo fuerza descarga en mismo origen; si es externo, se abre.
+  return ext?`<a class="btn pri" href="${esc(r.documento_url)}" target="_blank" rel="noopener">Abrir informe (PDF)</a>`
+            :`<a class="btn pri" href="${esc(r.documento_url)}" download>Descargar informe (PDF)</a>`;
+}
+function pintar(){
+  const rs=filtrar(),c={sube:0,baja:0,mantiene:0,nueva:0,retiro:0,perspectiva:0};
+  rs.forEach(r=>c[r.accion]!==undefined&&c[r.accion]++);
+  $('#kpis').innerHTML=`
+   <span class="kpi up"><b>${c.sube}</b><span>alzas</span></span>
+   <span class="kpi down"><b>${c.baja}</b><span>bajas</span></span>
+   <span class="kpi"><b>${c.mantiene}</b><span>confirmaciones</span></span>
+   <span class="kpi"><b>${c.perspectiva}</b><span>perspectiva</span></span>
+   <span class="kpi"><b>${c.nueva}</b><span>primeras</span></span>`;
+  $('#conteo').textContent=`${rs.length} de ${D.length} registros`;
+
+  if(!D.length){
+    $('#lista').innerHTML=`<div class="vacio"><h2>No hay datos todavía</h2>
+      <p>Esta página lee <code>data/clasificaciones.json</code>. Ejecuta
+      <code>python collector/run.py --dias 60</code> o lanza el workflow
+      <code>Recolectar clasificaciones</code> en Actions.</p></div>`;return;
+  }
+  if(!rs.length){
+    $('#lista').innerHTML=`<div class="vacio"><h2>Sin resultados</h2>
+      <p>No hay acciones en ese rango con esos filtros.</p></div>`;return;
+  }
+  $('#lista').innerHTML=rs.map(r=>{
+    const n=notches(r),ab=abiertos.has(r.id),s=r.resumen,cif=r.indicadores||[];
+    const det=r.accion==='mantiene'?'sin cambio':r.accion==='nueva'?'inicial':
+              r.accion==='retiro'?'retirada':r.accion==='perspectiva'?'solo tendencia':
+              (n===null?'previa n/d':`${Math.abs(n)} notch${Math.abs(n)>1?'es':''}`);
+    return `<article class="reg k-${r.accion} ${ab?'abierto':''}" data-id="${esc(r.id)}">
+      <button class="fila" aria-expanded="${ab}">
+        <div class="f-fecha">${fd(r.fecha)}</div>
+        <div class="f-emisor"><span class="nm">${esc(r.emisor||'Emisor no identificado')}${
+          r.emisor_dudoso?'<span class="aviso">REVISAR</span>':''}</span>
+          <span class="sub">${esc(r.instrumento||r.escala)}</span></div>
+        <div class="f-ag">${esc(r.clasificadora)}</div>
+        <div class="f-nota">${r.anterior&&r.anterior!==r.actual?`<span class="ant">${esc(r.anterior)}</span>`:''}
+          <span class="act">${esc(r.actual||'—')}</span><span>· ${esc(r.perspectiva||'—')}</span></div>
+        <div class="f-var"><span class="gl" aria-hidden="true">${GL[r.accion]||'·'}</span><span>${det}</span></div>
+      </button>
+      <div class="det">
+        <p class="titular">${esc(r.titular||'')}</p>
+        ${cif.length?`<div class="cifras">${cif.map(f=>
+          `<div class="cif"><b>${esc(f.v)}</b><i>${esc(f.l)}</i><em>${esc(f.p||'')}</em></div>`).join('')}</div>`:''}
+        ${(s||cif.length)?`
+        <div class="rejilla">
+          <div>
+            <div class="caja"><h4>Escala</h4>${escalera(r)}<div class="acc">${boton(r)}</div></div>
+            <div class="ficha">
+              <div><span>Acción</span><span>${ET[r.accion]||r.accion}</span></div>
+              <div><span>Perspectiva</span><span>${esc(r.perspectiva||'—')}</span></div>
+              <div><span>Fecha</span><span>${fd(r.fecha)}</span></div>
+            </div>
+          </div>
+          <div class="bloques">${s?`
+            <sec><h3><u>01</u>Acción de clasificación</h3><p>${esc(s.accion)||'—'}</p></sec>
+            <sec><h3><u>02</u>Fundamentos</h3><p>${esc(s.fundamentos)||'—'}</p></sec>
+            <sec><h3><u>03</u>Desempeño financiero</h3><p>${esc(s.desempeno)||'—'}</p></sec>
+            <sec><h3><u>04</u>Riesgos</h3><p>${esc(s.riesgos)||'—'}</p></sec>`
+            :`<div class="pend">Cifras extraídas del informe. El texto completo está en el PDF.</div>`}
+          </div>
+        </div>`:`
+        <div class="simple">
+          <div class="caja"><h4>Escala</h4>${escalera(r)}</div>
+          <div class="ficha">
+            <div><span>Acción</span><span>${ET[r.accion]||r.accion}</span></div>
+            <div><span>Perspectiva</span><span>${esc(r.perspectiva||'—')}</span></div>
+            <div><span>Clasificadora</span><span>${esc(r.clasificadora)}</span></div>
+            <div><span>Fecha</span><span>${fd(r.fecha)}</span></div>
+          </div>
+          <div class="acc">${boton(r)}
+            <p class="pend" style="padding:4px 0 0">El informe completo, con fundamentos y cifras, está en el documento de la clasificadora.</p>
+          </div>
+        </div>`}
+      </div></article>`;
+  }).join('');
+  document.querySelectorAll('.fila').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.closest('.reg').dataset.id;
+    abiertos.has(id)?abiertos.delete(id):abiertos.add(id);pintar();
+  }));
+}
+function csv(){
+  const rs=filtrar(),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const filas=[['Fecha','Emisor','Instrumento','Clasificadora','Anterior','Actual','Perspectiva','Accion','Notches','Titular','Documento']]
+    .concat(rs.map(r=>[r.fecha,r.emisor,r.instrumento,r.clasificadora,r.anterior,r.actual,r.perspectiva,
+      ET[r.accion],notches(r)??'',r.titular,r.documento_url||r.fuente_url]));
+  const b=new Blob(['\uFEFF'+filas.map(f=>f.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`clasificaciones_${$('#f1').value}_${$('#f2').value}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
+(async function(){
+  let raw={acciones:[]};
+  try{const r=await fetch('data/clasificaciones.json',{cache:'no-store'});if(r.ok)raw=await r.json();}catch(e){}
+  D=(raw.acciones||[]).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  $('#sello').textContent=raw.generado
+    ?'Actualizado '+new Date(raw.generado).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'}):'Sin datos';
+  [...new Set(D.map(r=>r.clasificadora))].sort().forEach(a=>{
+    const o=document.createElement('option');o.value=o.textContent=a;$('#f4').append(o);});
+  const iso=d=>d.toISOString().slice(0,10);
+  $('#f2').value=iso(new Date());$('#f1').value=iso(new Date(Date.now()-90*864e5));
+  if(D.length&&D[0].fecha<$('#f1').value){$('#f1').value=D[D.length-1].fecha;$('#f2').value=D[0].fecha;}
+  ['#f1','#f2','#f3','#f4'].forEach(s=>$(s).addEventListener('input',()=>{abiertos.clear();pintar();}));
+  document.querySelectorAll('#fk .chip').forEach(c=>c.addEventListener('click',()=>{
+    c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')==='true'?'false':'true');pintar();}));
+  $('#bc').addEventListener('click',csv);
+  $('#bx').addEventListener('click',e=>{todo=!todo;
+    abiertos=todo?new Set(filtrar().map(r=>r.id)):new Set();
+    e.target.textContent=todo?'Cerrar todo':'Abrir todo';pintar();});
+  pintar();
+})();
+</script>
+</body>
+</html>
